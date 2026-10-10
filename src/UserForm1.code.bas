@@ -9,6 +9,7 @@ Private WithEvents cmbGost As MSForms.ComboBox
 Private WithEvents btnRecheck As MSForms.CommandButton
 Private fr(0 To 3) As MSForms.Frame
 Private lblStatus As MSForms.Label
+Private WithEvents lblTip As MSForms.Label
 
 ' --- вкладка «Сокращения»
 Private WithEvents cmbFilter As MSForms.ComboBox
@@ -121,8 +122,13 @@ Private Sub UserForm_Initialize()
         f.Visible = (i = 0)
         Set fr(i) = f
     Next
-    Set lblStatus = Lbl(Me, 6, 470, 324, 30)
+    Set lblStatus = Lbl(Me, 6, 470, 228, 30)
     lblStatus.ForeColor = RGB(31, 56, 100)
+    Set lblTip = Lbl(Me, 238, 470, 92, 14, "Поддержать автора")
+    lblTip.TextAlign = fmTextAlignRight
+    lblTip.ForeColor = RGB(5, 99, 193)
+    lblTip.Font.Underline = True
+    lblTip.ControlTipText = "Надстройка бесплатна. Можно угостить автора кофе"
 
     BuildPageAbbr fr(0)
     BuildPageList fr(1)
@@ -600,12 +606,20 @@ Private Sub btnWrite_Click()
     On Error GoTo eh
     If Not Rescan() Then Exit Sub
     msg = WriteList(chkDrop.Value)
+    If Left$(msg, 8) = "Перечень" Then
+        If TipDue() Then msg = msg & " Если надстройка сэкономила вам время " & Dash() & " можно угостить автора кофе (ссылка справа внизу)."
+    End If
     DoRescan msg
     GoPage 1
     Exit Sub
 eh:
     Application.ScreenUpdating = True
     SetStatus "Не получилось: " & Err.Description
+End Sub
+
+Private Sub lblTip_Click()
+    OpenTipPage
+    SetStatus "Спасибо! Открываю страницу в браузере."
 End Sub
 
 ' ---------------------------------------------------------------------

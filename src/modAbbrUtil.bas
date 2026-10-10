@@ -702,6 +702,30 @@ Public Function OptTabStyle() As Boolean
     OptTabStyle = (GetOpt("ListStyle", "0") = "0")
 End Function
 
+' ---------- поддержка автора ----------
+Public Function TipUrl() As String
+    TipUrl = "https://pay.cloudtips.ru/p/b787322c"
+End Function
+
+Public Sub OpenTipPage()
+    On Error Resume Next
+    CreateObject("Shell.Application").ShellExecute TipUrl()
+End Sub
+
+' Напоминание о чаевых — не чаще раза в 30 дней
+Public Function TipDue() As Boolean
+    Dim last As String
+    last = GetOpt("TipLast", "")
+    If Len(last) = 0 Then
+        TipDue = True
+    ElseIf IsDate(last) Then
+        TipDue = (Date - CDate(last) >= 30)
+    Else
+        TipDue = True
+    End If
+    If TipDue Then SetOpt "TipLast", CStr(Date)
+End Function
+
 Public Function AppTitle() As String
     AppTitle = "Сокращения ГОСТ"
 End Function

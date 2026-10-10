@@ -36,6 +36,8 @@
           </dropDown>
           <checkBox id="chkStrict" label="Строгий режим" getPressed="AbbrPressed" onAction="AbbrCheck"
                     supertip="Требовать расшифровку при первом упоминании в тексте, даже если сокращение есть в перечне. Так проверяет большинство нормоконтролёров."/>
+          <button id="btnTip" label="Поддержать автора" onAction="AbbrOnAction"
+                  supertip="Надстройка бесплатна и с открытым кодом. Если она сэкономила вам время — можно угостить автора кофе. Откроется страница CloudTips в браузере."/>
           <button id="btnHelp" label="Справка" imageMso="Help" onAction="AbbrOnAction"
                   supertip="Что умеет надстройка и какие пункты стандартов проверяются."/>
         </group>

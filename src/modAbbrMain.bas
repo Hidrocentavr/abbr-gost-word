@@ -28,6 +28,7 @@ Public Sub AbbrOnAction(control As Object)
         Case "btnClear": CmdClear
         Case "btnComments": CmdComments
         Case "btnHelp": ShowHelp
+        Case "btnTip": OpenTipPage
     End Select
 End Sub
 
