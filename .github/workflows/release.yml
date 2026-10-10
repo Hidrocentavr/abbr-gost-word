@@ -1,0 +1,71 @@
+name: Release
+
+# Релиз публикуется автоматически, когда в main появляется release-notes/vX.Y.md,
+# для которого ещё нет релиза. Также можно вручную: метка vX.Y или кнопка «Run workflow».
+on:
+  push:
+    branches: [main]
+    paths: ['release-notes/v*.md']
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Версия, например v2.1 (должен существовать release-notes/v2.1.md)'
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install oletools==0.60.2 python-docx==1.1.2
+
+      - name: Find versions to publish
+        id: find
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          if [ -n "$INPUT_VERSION" ]; then
+            CANDIDATES="$INPUT_VERSION"
+          elif [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            CANDIDATES="${GITHUB_REF_NAME}"
+          else
+            CANDIDATES=$(ls release-notes/v*.md 2>/dev/null | xargs -n1 basename | sed 's/\.md$//')
+          fi
+          TODO=""
+          for V in $CANDIDATES; do
+            if gh release view "$V" >/dev/null 2>&1; then
+              echo "$V: релиз уже есть, пропускаю"
+            else
+              TODO="$TODO $V"
+            fi
+          done
+          echo "versions=$TODO" >> "$GITHUB_OUTPUT"
+          echo "К публикации:$TODO"
+
+      - name: Build and publish
+        if: steps.find.outputs.versions != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for V in ${{ steps.find.outputs.versions }}; do
+            python make_release.py "$V"
+            NOTES="release-notes/${V}.md"
+            if [ -f "$NOTES" ]; then ARGS=(--notes-file "$NOTES"); else ARGS=(--notes "Сокращения ГОСТ ${V#v}"); fi
+            gh release create "$V" "dist/AbbrGOST_${V}.zip" \
+              --target "${GITHUB_SHA}" --title "Сокращения ГОСТ ${V#v}" "${ARGS[@]}"
+          done

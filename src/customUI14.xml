@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="AbbrRibbonLoad">
+  <ribbon>
+    <tabs>
+      <tab id="tabAbbrGost" label="Сокращения ГОСТ" insertAfterMso="TabReviewWord">
+        <group id="grpAbbrCheck" label="Проверка">
+          <button id="btnCheck" label="Проверить" size="large" imageMso="ReviewTrackChanges" onAction="AbbrOnAction"
+                  screentip="Проверить сокращения"
+                  supertip="Открывает панель рядом с текстом: все сокращения со статусом. Щелчок по строке переносит курсор к первому упоминанию, там же можно вписать расшифровку и исправить."/>
+          <button id="btnFix" label="Исправить всё" size="large" imageMso="ReviewAcceptChange" onAction="AbbrOnAction"
+                  screentip="Исправить всё автоматически"
+                  supertip="Вставляет расшифровки при первом упоминании и исправляет написание во всём документе. Правки вносятся в режиме исправлений, отмена — Ctrl+Z."/>
+          <button id="btnList" label="Перечень" size="large" imageMso="TableInsert" onAction="AbbrOnAction"
+                  screentip="Перечень сокращений"
+                  supertip="Открывает вкладку панели с будущим перечнем: что в нём будет, замечания по ГОСТ и кнопка записи в документ."/>
+        </group>
+        <group id="grpAbbrTools" label="Инструменты">
+          <button id="btnAddDict" label="В словарь" imageMso="ReviewNewComment" onAction="AbbrOnAction"
+                  supertip="Выделите сокращение в тексте и нажмите: откроется карточка для ввода расшифровки."/>
+          <button id="btnAddSym" label="Обозначение" onAction="AbbrOnAction"
+                  supertip="Выделите символ (F, ω, Vmax) и нажмите: откроется вкладка обозначений для ввода пояснения."/>
+          <button id="btnReport" label="Отчёт в документ" imageMso="FileOpen" onAction="AbbrOnAction"
+                  supertip="Сохранить результаты проверки отдельным документом Word — например, чтобы отправить коллеге."/>
+          <button id="btnComments" label="Поставить примечания" onAction="AbbrOnAction"
+                  supertip="Поставить примечания у первого упоминания проблемных сокращений — удобно, если документ проверяет другой человек."/>
+          <button id="btnClear" label="Убрать примечания" imageMso="ReviewDeleteComment" onAction="AbbrOnAction"
+                  supertip="Удалить примечания, поставленные надстройкой. Ваши собственные примечания не затрагиваются."/>
+        </group>
+        <group id="grpAbbrSet" label="Настройки">
+          <dropDown id="ddGost" label="Стандарт" sizeString="WWWWWWWWWWWWWWW"
+                    getSelectedItemIndex="AbbrGostSel" onAction="AbbrGostSelect"
+                    supertip="По какому стандарту проверять и оформлять перечень.">
+            <item id="g732" label="ГОСТ 7.32-2017 (отчёт о НИР)"/>
+            <item id="g7011" label="ГОСТ Р 7.0.11-2011 (диссертация)"/>
+            <item id="g2105" label="ГОСТ Р 2.105-2019 (ЕСКД)"/>
+          </dropDown>
+          <checkBox id="chkStrict" label="Строгий режим" getPressed="AbbrPressed" onAction="AbbrCheck"
+                    supertip="Требовать расшифровку при первом упоминании в тексте, даже если сокращение есть в перечне. Так проверяет большинство нормоконтролёров."/>
+          <button id="btnHelp" label="Справка" imageMso="Help" onAction="AbbrOnAction"
+                  supertip="Что умеет надстройка и какие пункты стандартов проверяются."/>
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>
